@@ -1,0 +1,99 @@
+
+:root {
+--bs-primary: #2de2d9;
+--bs-secondary: #28a7a0;
+--bs-highlight: #ff8c3e;
+--bs-success: #51b530;
+--bs-info: #4881c2;
+--bs-warning: #ffcd3c;
+--bs-danger: #ff6442;
+--bs-light: #ffffff;
+--bs-dark: #282828;
+--bs-footer: #071413;
+--bs-hero: #081a18;
+--bs-navbar: #0d2624;
+--bs-green: #236a65;
+--bs-lightgreen: #c5e68a;
+--bs-peach: #ffe5d4;
+--jcore-navigation-desktop-background-color: #0d2624;
+--jcore-navigation-desktop-background-hover-selected-color: #0d2624;
+--jcore-navigation-desktop-font-color: #ffffff;
+--jcore-navigation-desktop-font-hover-selected-color: #ffffff;
+--jcore-navigation-desktop-submenu-background-color: #236a65;
+--jcore-navigation-desktop-submenu-background-hover-selected-color: #236a65;
+--jcore-navigation-desktop-submenu-font-color: #ffffff;
+--jcore-navigation-desktop-submenu-font-hover-selected-color: #ffffff;
+--jcore-navigation-desktop-logo-color: transparent;
+--jcore-navigation-mobile-menubar-background-color: #0d2624;
+--jcore-navigation-mobile-menubar-font-color: #ffffff;
+--jcore-navigation-mobile-menubar-font-hover-selected-color: #ffffff;
+--jcore-navigation-mobile-background-color: #0d2624;
+--jcore-navigation-mobile-font-color: #ffffff;
+--jcore-navigation-mobile-font-hover-selected-color: #ffffff;
+--jcore-navigation-mobile-logo-color: transparent;
+--jcore-site-background-color: #ffffff;
+--jcore-site-text-color: #282828;
+--jcore-site-login-background-color: #282828;
+--jcore-site-login-form-color: #0d2624;
+--jcore-site-login-text-color: #ffffff;
+}
+.has-primary-background-color { background-color: var(--bs-primary) }
+.has-primary-overlay-color { background-color: var(--bs-primary) }
+.has-primary-color { color: var(--bs-primary) }
+.hover-primary-color:hover { color: var(--bs-primary) }
+.has-secondary-background-color { background-color: var(--bs-secondary) }
+.has-secondary-overlay-color { background-color: var(--bs-secondary) }
+.has-secondary-color { color: var(--bs-secondary) }
+.hover-secondary-color:hover { color: var(--bs-secondary) }
+.has-highlight-background-color { background-color: var(--bs-highlight) }
+.has-highlight-overlay-color { background-color: var(--bs-highlight) }
+.has-highlight-color { color: var(--bs-highlight) }
+.hover-highlight-color:hover { color: var(--bs-highlight) }
+.has-success-background-color { background-color: var(--bs-success) }
+.has-success-overlay-color { background-color: var(--bs-success) }
+.has-success-color { color: var(--bs-success) }
+.hover-success-color:hover { color: var(--bs-success) }
+.has-info-background-color { background-color: var(--bs-info) }
+.has-info-overlay-color { background-color: var(--bs-info) }
+.has-info-color { color: var(--bs-info) }
+.hover-info-color:hover { color: var(--bs-info) }
+.has-warning-background-color { background-color: var(--bs-warning) }
+.has-warning-overlay-color { background-color: var(--bs-warning) }
+.has-warning-color { color: var(--bs-warning) }
+.hover-warning-color:hover { color: var(--bs-warning) }
+.has-danger-background-color { background-color: var(--bs-danger) }
+.has-danger-overlay-color { background-color: var(--bs-danger) }
+.has-danger-color { color: var(--bs-danger) }
+.hover-danger-color:hover { color: var(--bs-danger) }
+.has-light-background-color { background-color: var(--bs-light) }
+.has-light-overlay-color { background-color: var(--bs-light) }
+.has-light-color { color: var(--bs-light) }
+.hover-light-color:hover { color: var(--bs-light) }
+.has-dark-background-color { background-color: var(--bs-dark) }
+.has-dark-overlay-color { background-color: var(--bs-dark) }
+.has-dark-color { color: var(--bs-dark) }
+.hover-dark-color:hover { color: var(--bs-dark) }
+.has-footer-background-color { background-color: var(--bs-footer) }
+.has-footer-overlay-color { background-color: var(--bs-footer) }
+.has-footer-color { color: var(--bs-footer) }
+.hover-footer-color:hover { color: var(--bs-footer) }
+.has-hero-background-color { background-color: var(--bs-hero) }
+.has-hero-overlay-color { background-color: var(--bs-hero) }
+.has-hero-color { color: var(--bs-hero) }
+.hover-hero-color:hover { color: var(--bs-hero) }
+.has-navbar-background-color { background-color: var(--bs-navbar) }
+.has-navbar-overlay-color { background-color: var(--bs-navbar) }
+.has-navbar-color { color: var(--bs-navbar) }
+.hover-navbar-color:hover { color: var(--bs-navbar) }
+.has-green-background-color { background-color: var(--bs-green) }
+.has-green-overlay-color { background-color: var(--bs-green) }
+.has-green-color { color: var(--bs-green) }
+.hover-green-color:hover { color: var(--bs-green) }
+.has-lightgreen-background-color { background-color: var(--bs-lightgreen) }
+.has-lightgreen-overlay-color { background-color: var(--bs-lightgreen) }
+.has-lightgreen-color { color: var(--bs-lightgreen) }
+.hover-lightgreen-color:hover { color: var(--bs-lightgreen) }
+.has-peach-background-color { background-color: var(--bs-peach) }
+.has-peach-overlay-color { background-color: var(--bs-peach) }
+.has-peach-color { color: var(--bs-peach) }
+.hover-peach-color:hover { color: var(--bs-peach) }

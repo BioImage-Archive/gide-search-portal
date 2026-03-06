@@ -1,0 +1,20 @@
+---
+const { facet, index, facetName, selectedFacets } = Astro.props;
+---
+
+<div class="facet-option">
+    <div class="facet-label-group">
+        <input
+            type="checkbox"
+            name={facet.key}
+            value={facet.key}
+            id={`${facetName}-${index}`}
+            checked={Object(selectedFacets)[facetName]
+                ? Object(selectedFacets)[facetName].includes(facet.key)
+                : false}
+        />
+        <label>
+            {facet.label || facet.key} ({facet.count})
+        </label>
+    </div>
+</div>

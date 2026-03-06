@@ -1,0 +1,16 @@
+---
+export interface Facet {
+    key: string;
+    key_as_string?: string;
+    doc_count: number;
+}
+
+export type SelectedFacets = Record<string, string[]>;
+
+export interface PaginationData {
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+---

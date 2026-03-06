@@ -1,0 +1,302 @@
+---
+export const prerender = false;
+import BaseLayout from "../layout/BaseLayout.astro";
+import StudyCard from "../components/DatasetSearchResultCard.astro";
+import {
+    SelectedFacets,
+    PaginationData,
+} from "../components/SearchControl/SearchInterfaces.astro";
+import { GIDE_SEARCH_API } from "astro:env/client";
+import FacetUI from "../components/SearchControl/FacetUI.astro";
+import PaginationControl from "../components/SearchControl/PaginationControl.astro";
+
+const searchEndpoint = GIDE_SEARCH_API;
+
+const url = new URL(Astro.request.url);
+const query = url.searchParams.get("query") || "";
+const page = Number(url.searchParams.get("page")) || 1;
+const pageSize = Number(url.searchParams.get("pageSize")) || 12;
+const selectedFacets: SelectedFacets = {
+    organism: url.searchParams.getAll("organism"),
+    imaging_method: url.searchParams.getAll("imaging_method"),
+    year_published: url.searchParams.getAll("year_published"),
+    license: url.searchParams.getAll("license"),
+    publisher: url.searchParams.getAll("publisher"),
+};
+
+const FACET_CONFIG: Record<
+    string,
+    {
+        title: string;
+        type: "terms" | "boolean";
+        queryKey: string;
+    }
+> = {
+    organism: { title: "Organism", type: "terms", queryKey: "organism" },
+};
+
+function generateParamString(
+    baseURL,
+    query,
+    page,
+    selectedFacets: SelectedFacets,
+    pageSize,
+) {
+    const url = new URL(baseURL);
+    url.searchParams.set("q", query ?? "");
+    pageSize = pageSize ?? "12";
+    url.searchParams.set("size", String(pageSize));
+    url.searchParams.set("offset", String(page - 1));
+
+    for (const [facetKey, values] of Object.entries(selectedFacets)) {
+        if (!values?.length) continue;
+        if (facetKey == "year_published") {
+            url.searchParams.delete("year_from");
+            url.searchParams.delete("year_to");
+            const year = Number(values[0]);
+
+            url.searchParams.set("year_from", String(year));
+            url.searchParams.set("year_to", String(year + 1));
+        } else {
+            url.searchParams.delete(facetKey);
+            for (const v of values) {
+                if (v === null || v === undefined) continue;
+                url.searchParams.append(facetKey, v);
+            }
+        }
+    }
+
+    return url;
+}
+
+const searchURL = generateParamString(
+    searchEndpoint,
+    query,
+    page,
+    selectedFacets,
+    pageSize,
+);
+
+let hits = [];
+let facetData = {};
+let paginationData = {} as PaginationData;
+let totalResults = 0;
+
+const searchResponse = await fetch(String(searchURL));
+
+console.log(String(searchURL));
+if (searchResponse.ok) {
+    const data = await searchResponse.json();
+    hits = data.hits;
+    facetData = data.facets;
+    totalResults = data.total;
+    paginationData = {
+        pageSize: pageSize,
+        page: page,
+        totalPages: Math.ceil(Number(data.total) / pageSize),
+    };
+}
+---
+
+<BaseLayout>
+    <section id="search-section" class="container">
+        <div class="row">
+            <h1 style="margin-top:1rem;">Search GIDE databases</h1>
+
+            <aside class="col-md-4" id="facets">
+                <!-- Left sidebar for facets -->
+                {
+                    Object.entries(facetData).map(([key, facet]) => (
+                        <FacetUI
+                            facetData={facet}
+                            facetName={key}
+                            selectedFacets={selectedFacets}
+                        />
+                    ))
+                }
+            </aside>
+            <div class="col-md-8">
+                <!-- Central column for search and results -->
+                <div id="search-controls" style="justify-content: flex-end;">
+                    <form id="user-query" style="flex: 1 0 auto;">
+                        <div class="has-secondary-background-color">
+                            <input
+                                name="query"
+                                id="query"
+                                type="text"
+                                placeholder="Enter search terms..."
+                                value={query ?? null}
+                            />
+                            <button
+                                id="search-button"
+                                style="padding: 0 0.5rem;">Search</button
+                            >
+                        </div>
+                        <div>
+                            <label
+                                for="pageSize"
+                                class=""
+                                style="margin: 0;padding: 0;border: 0;"
+                                >Page Size:</label
+                            >
+                            <select
+                                name="pageSize"
+                                id="pageSize"
+                                class=""
+                                style=""
+                            >
+                                <option value="12" selected={pageSize === 12}
+                                    >Default</option
+                                >
+                                <option value="30" selected={pageSize === 30}
+                                    >30</option
+                                >
+                                <option value="60" selected={pageSize === 60}
+                                    >60</option
+                                >
+                                <option value="90" selected={pageSize === 90}
+                                    >90</option
+                                >
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <section id="results">
+                    {
+                        hits === undefined || hits.length === 0 ? (
+                            <p>No results found.</p>
+                        ) : (
+                            hits?.map((item) => (
+                                <StudyCard studyCardInfo={item.entry} />
+                            ))
+                        )
+                    }
+                </section>
+                <div id="page-controls">
+                    <PaginationControl paginationData={paginationData} />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="module">
+        window.addEventListener("pageshow", (event) => {
+            if (
+                event.persisted ||
+                performance.getEntriesByType("navigation")[0]?.type ===
+                    "back_forward"
+            ) {
+                // Reload the page to reset all state
+                window.location.reload();
+            }
+        });
+
+        const pagination = document.getElementById("pageSize");
+        pagination.addEventListener("change", (event) => {
+            const pageSize = event.target.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set("pageSize", pageSize);
+            window.location.href = url.toString();
+        });
+
+        function getForm() {
+            return document.getElementById("user-query");
+        }
+
+        function submitQueryWithFacets() {
+            const form = getForm();
+            if (!form) return;
+            // Ensure empty fields have no name before submission
+            form.querySelectorAll("input[data-name]").forEach((el) => {
+                if (el.value.trim() === "") el.removeAttribute("name");
+                else el.setAttribute("name", el.dataset.name);
+            });
+
+            form.requestSubmit?.() ?? form.submit();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("user-query");
+            const facets = document.getElementById("facets");
+            const queryInput = document.getElementById("query");
+
+            if (!form || !facets || !queryInput) return;
+
+            const params = new URL(window.location.href).searchParams;
+
+            // utility to keep the form in sync with checked facets
+            function syncFacetInputs() {
+                // clear previous generated inputs
+                form.querySelectorAll("input[data-facet-input]").forEach((el) =>
+                    el.remove(),
+                );
+
+                facets
+                    .querySelectorAll("input[type=checkbox]:checked")
+                    .forEach((checkbox) => {
+                        const section = checkbox.closest(".facet-section");
+                        const category = section?.dataset.facetName;
+                        if (!category) return;
+
+                        const hidden = document.createElement("input");
+                        hidden.type = "hidden";
+                        hidden.name = category;
+                        hidden.value = checkbox.value;
+                        hidden.dataset.facetInput = "true";
+                        form.appendChild(hidden);
+                    });
+            }
+
+            // submit form when facets or button change
+            facets.querySelectorAll("input").forEach((checkbox) => {
+                checkbox.addEventListener("change", () => {
+                    syncFacetInputs();
+                    submitQueryWithFacets();
+                });
+            });
+
+            form.addEventListener("submit", (e) => {
+                // ensure facets are synced before normal submission
+                syncFacetInputs();
+            });
+
+            syncFacetInputs();
+        });
+    </script>
+
+    <style>
+        #user-query {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        #search-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #facets {
+            display: flex;
+            flex-direction: column; /* Stack facets vertically in the sidebar */
+            gap: 1rem; /* Reduce gap for tighter vertical spacing */
+            margin-bottom: 1rem;
+        }
+
+        #page-controls {
+            display: flex;
+            justify-content: center;
+        }
+
+        .facet-category h4 {
+            margin: 0 0 0.25rem;
+        }
+
+        .facet-category label {
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+    </style>
+</BaseLayout>

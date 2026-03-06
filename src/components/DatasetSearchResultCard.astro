@@ -1,0 +1,161 @@
+---
+const { studyCardInfo } = Astro.props;
+
+const entry = studyCardInfo ?? {};
+
+const title = entry.name || "";
+const description = entry.description || "";
+const url = entry.id || "#";
+
+const thumbnailUrl =
+    entry.thumbnailUrl && entry.thumbnailUrl.length > 0
+        ? entry.thumbnailUrl[0]
+        : null;
+const authors = entry.author ?? [];
+const date = entry.datePublished;
+
+const organisms = studyCardInfo.about.filter(function (subject) {
+    return subject.type == "Taxon";
+});
+
+const imaging_method = studyCardInfo.measurementMethod.filter(
+    function (subject) {
+        return subject.type == "DefinedTerm" && subject.id;
+    },
+);
+---
+
+<article class="study-card">
+    <div class="card-title">
+        {
+            thumbnailUrl && (
+                <a href={url} class="thumbnail">
+                    <img src={thumbnailUrl} alt={`Thumbnail for ${title}`} />
+                </a>
+            )
+        }
+        <span class="card-title-text">
+            <a href={url}><h2>{title}</h2></a>
+
+            {
+                authors.length > 0 && (
+                    <p class="authors">
+                        {authors.map((a, i) => {
+                            let url = null;
+                            try {
+                                url = new URL(a.id);
+                            } catch {
+                                // not a valid absolute URL
+                            }
+                            return (
+                                <>
+                                    {i > 0 && ", "}
+                                    {url ? <a href={a.id}>{a.name}</a> : a.name}
+                                </>
+                            );
+                        })}
+                    </p>
+                )
+            }
+            {date && <p class="date">{date}</p>}
+        </span>
+    </div>
+
+    <div class="card-content">
+        {
+            description && (
+                <div>
+                    <p class="description">{description}</p>
+                </div>
+            )
+        }
+
+        <div>
+            {
+                imaging_method.length > 0 && (
+                    <p class="term-list">
+                        Imaging Methods:{" "}
+                        {imaging_method.map((a) => (
+                            <a class="term-link" href={a.id}>
+                                {a.name}
+                            </a>
+                        ))}
+                    </p>
+                )
+            }
+            {
+                organisms.length > 0 && (
+                    <p class="term-list">
+                        Organisms:
+                        {organisms.map((a) => (
+                            <a class="term-link" href={a.id}>
+                                {a.name}
+                            </a>
+                        ))}
+                    </p>
+                )
+            }
+        </div>
+    </div>
+</article>
+
+<style>
+    .study-card {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+        transition: box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .study-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .thumbnail {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        flex-shrink: 0;
+        margin: 1rem 1rem 1rem 0;
+    }
+
+    .card-title {
+        padding: 0 1rem;
+        display: flex;
+    }
+    .card-content {
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title-text {
+        grid-column: 2;
+        padding-top: 1rem;
+    }
+
+    .card-title-text h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .card-title .authors,
+    .card-title .date {
+        margin: 0 0 0.25rem;
+        font-size: 0.875rem;
+        color: #555;
+    }
+
+    .card-content .description {
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .card-content .term-link {
+        padding-right: 0.5rem;
+    }
+</style>

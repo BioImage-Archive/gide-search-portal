@@ -1,0 +1,220 @@
+---
+import FacetOption from "./FacetOption.astro";
+
+const { facetData, facetName, selectedFacets } = Astro.props;
+const initialCount = 5;
+const expandCount = 10;
+
+const intital_facetdata = facetData.slice(0, initialCount);
+const expanded_facetdata = facetData.slice(
+    initialCount,
+    initialCount + expandCount,
+);
+const rest_facetdata = facetData.slice(initialCount + expandCount);
+---
+
+<div
+    class="facet-section"
+    data-facet-name={facetName}
+    data-facet-state="initial"
+>
+    <div class="facet-title">
+        <legend
+            onclick={`toggleFacet('${facetName}')`}
+            tabindex="0"
+            role="button"
+        >
+            {facetName.replace("_", " ")}
+        </legend>
+    </div>
+
+    <!-- Initial facets -->
+    <div class="facet-items-initial">
+        {
+            intital_facetdata.map((facet, index) => (
+                <FacetOption
+                    facet={facet}
+                    index={index}
+                    facetName={facetName}
+                    selectedFacets={selectedFacets}
+                />
+            ))
+        }
+    </div>
+
+    <!-- Middle facets -->
+    {
+        expanded_facetdata.length > 0 && (
+            <div class="facet-items-expand">
+                {expanded_facetdata.map((facet, index) => (
+                    <FacetOption
+                        facet={facet}
+                        index={index}
+                        facetName={facetName}
+                        selectedFacets={selectedFacets}
+                    />
+                ))}
+            </div>
+        )
+    }
+
+    <!-- Remaining facets -->
+    {
+        rest_facetdata.length > 0 && (
+            <div class="facet-items-all">
+                {rest_facetdata.map((facet, index) => (
+                    <FacetOption
+                        facet={facet}
+                        index={index}
+                        facetName={facetName}
+                        selectedFacets={selectedFacets}
+                    />
+                ))}
+            </div>
+        )
+    }
+
+    <!-- Controls -->
+    {
+        facetData.length > initialCount && (
+            <div class="facet-controls">
+                <button
+                    class="facet-btn facet-show-more"
+                    data-facet-name={facetName}
+                    data-action="expanded"
+                >
+                    Show {expanded_facetdata.length} more
+                </button>
+                {facetData.length > initialCount + expandCount && (
+                    <button
+                        class="facet-btn facet-show-all"
+                        data-facet-name={facetName}
+                        data-action="all"
+                    >
+                        Show all {facetData.length}
+                    </button>
+                )}
+                <button
+                    class="facet-btn facet-collapse"
+                    data-facet-name={facetName}
+                    data-action="collapse"
+                >
+                    Collapse
+                </button>
+            </div>
+        )
+    }
+</div>
+
+<style>
+    .facet-title {
+        text-transform: capitalize;
+    }
+
+    .facet-section {
+        position: relative;
+    }
+
+    /* Hide expanded items by default */
+    .facet-items-expand,
+    .facet-items-all {
+        display: none;
+    }
+
+    /* State: expanded (show first 15) */
+    .facet-section[data-facet-state="expanded"] .facet-items-expand {
+        display: block;
+    }
+
+    .facet-section[data-facet-state="expanded"] .facet-show-more {
+        display: none;
+    }
+
+    .facet-section[data-facet-state="expanded"] .facet-show-all,
+    .facet-section[data-facet-state="expanded"] .facet-collapse {
+        display: inline-block;
+    }
+
+    /* State: all (show everything) */
+    .facet-section[data-facet-state="all"] .facet-items-expand,
+    .facet-section[data-facet-state="all"] .facet-items-all {
+        display: block;
+    }
+
+    .facet-section[data-facet-state="all"] .facet-show-more,
+    .facet-section[data-facet-state="all"] .facet-show-all {
+        display: none;
+    }
+
+    .facet-section[data-facet-state="all"] .facet-collapse {
+        display: inline-block;
+    }
+
+    /* Default state (initial) */
+    .facet-section[data-facet-state="initial"] .facet-show-more {
+        display: inline-block;
+    }
+
+    .facet-section[data-facet-state="initial"] .facet-show-all {
+        display: none;
+    }
+    .facet-section[data-facet-state="initial"] .facet-collapse {
+        display: none;
+    }
+
+    /* State after collapse (same as initial) */
+    .facet-section[data-facet-state="collapse"] .facet-show-more {
+        display: inline-block;
+    }
+
+    .facet-section[data-facet-state="collapse"] .facet-show-all {
+        display: none;
+    }
+    .facet-section[data-facet-state="collapse"] .facet-collapse {
+        display: none;
+    }
+
+    .facet-controls {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .facet-btn {
+        display: inline-block;
+        background: none;
+        border: none;
+        color: var(--bs-link-color);
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.9rem;
+        text-decoration: underline;
+        text-decoration-color: var(--bs-link-color);
+    }
+
+    .facet-btn:hover {
+        color: var(--bs-link-hover-color);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".facet-btn");
+
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const facetName = btn.dataset.facetName;
+                const action = btn.dataset.action;
+                const section = document.querySelector(
+                    `.facet-section[data-facet-name="${facetName}"]`,
+                );
+
+                if (section) {
+                    section.dataset.facetState = action;
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,28 @@
+---
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+import "/src/styles/gide_color_scheme.css"
+const baseUrl = import.meta.env.BASE_URL;
+console.log(baseUrl)
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" id="wp-block-library-css" href="https://founding-gide.eurobioimaging.eu/wp-includes/css/dist/block-library/style.min.css" type="text/css" media="all">
+        <link rel="stylesheet" id="theme-css" href="https://founding-gide.eurobioimaging.eu/wp-content/themes/foundinggide/dist/css/theme.css" type="text/css" media="all">
+        <link rel="icon" type="image/png" href={`${baseUrl}/favicon.png`}>
+    </head>
+    <header>
+        <Navigation />
+    </header>
+    <body class="full-screen flex-column">
+        <slot />
+        <Footer/>
+    </body>
+    
+
+    <style>
+
+    </style>
+</html>

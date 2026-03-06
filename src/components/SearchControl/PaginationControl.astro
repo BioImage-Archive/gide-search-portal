@@ -1,0 +1,78 @@
+---
+const { paginationData } = Astro.props;
+const currentPage = paginationData.page;
+const totalPages = paginationData.totalPages;
+
+
+function buildPageURL(targetPage) {
+  const url = new URL(Astro.request.url);
+  url.searchParams.set("page", targetPage);
+  return url.toString();
+}
+
+let startPage = Math.max(1, currentPage - 2);
+let endPage = Math.min(totalPages, startPage + 7);
+if (endPage - startPage < 4) {
+  startPage = Math.max(1, endPage - 7);
+}
+---
+
+<nav class="pagination-nav" aria-label="Pagination">
+  <ul class="list-unstyled list-inline">
+    <li class="list-inline-item">
+      {
+        currentPage > 1 ? (
+          <a href={buildPageURL(1)} class="btn">
+            First
+          </a>
+        ) : (
+          <span class="btn disabled">First</span>
+        )
+      }
+    </li>
+    {
+      Array.from(
+        { length: endPage - startPage + 1 },
+        (_, i) => startPage + i,
+      ).map((p) => (
+        <li class="list-inline-item">
+          {p === currentPage ? (
+            <span class="btn disabled">{p}</span>
+          ) : (
+            <a href={buildPageURL(p)} class="btn ">
+              {p}
+            </a>
+          )}
+        </li>
+      ))
+    }
+    <li class="list-inline-item">
+      {
+        currentPage < totalPages ? (
+          <a href={buildPageURL(totalPages)} class="btn">
+            Last
+          </a>
+        ) : (
+          <span class="btn disabled">Last</span>
+        )
+      }
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .pagination-nav {
+    margin: 1rem 0;
+  }
+
+  .btn.active {
+    background-color: #3b6fb6;
+    border-color: #3b6fb6;
+    color: #ffffff;
+  }
+
+  .btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+</style>
