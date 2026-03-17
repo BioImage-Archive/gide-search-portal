@@ -1,22 +1,22 @@
 ---
-import { Image } from 'astro:assets';
-
 import gideLogo from "../assets/gide_logos/RGB-color-whitetext.svg"
+
+const base = import.meta.env.BASE_URL
 ---
 
 <nav class="navbar">
     <div class="navbar-brand">
-        <a href="/gide-search/">
-            <Image
-                src={gideLogo}
+        <a href={`${base}`}>
+            <img
+                src={gideLogo.src}
                 alt="GIDE Logo"
                 class="logo"
             />
         </a>
     </div>
     <ul class="navbar-links">
-        <li><a href="/gide-search/about/">About</a></li>
-        <li><a href="/gide-search/">Search</a></li>
+        <li><a href={`${base}/about`}>About</a></li>
+        <li><a href={`${base}`}>Search</a></li>
     </ul>
 </nav>
 

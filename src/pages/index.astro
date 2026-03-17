@@ -84,7 +84,6 @@ let totalResults = 0;
 
 const searchResponse = await fetch(String(searchURL));
 
-console.log(String(searchURL));
 if (searchResponse.ok) {
     const data = await searchResponse.json();
     hits = data.hits;
@@ -96,6 +95,8 @@ if (searchResponse.ok) {
         totalPages: Math.ceil(Number(data.total) / pageSize),
     };
 }
+
+const licence_map = facetData?.license.reduce((acc, licence_facet) => {acc.set(licence_facet.key, licence_facet.label); return acc;}, new Map())
 ---
 
 <BaseLayout>
@@ -167,7 +168,7 @@ if (searchResponse.ok) {
                             <p>No results found.</p>
                         ) : (
                             hits?.map((item) => (
-                                <StudyCard studyCardInfo={item.entry} />
+                                <StudyCard studyCardInfo={item.entry} licence_map={licence_map}/>
                             ))
                         )
                     }

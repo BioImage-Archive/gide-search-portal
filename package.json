@@ -5,12 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "astro dev"
+    "dev": "astro dev",
+    "build": "astro build",
+    "prod": "PORT=8000 HOST=0.0.0.0 node dist/server/entry.mjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@astrojs/node": "^9.2.2",
     "astro": "^5.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24"
   }
 }
