@@ -1,7 +1,10 @@
 import { defineConfig, envField } from 'astro/config';
+import node from '@astrojs/node';
+
+const adapter = node({ mode: 'standalone' });
 
 export default defineConfig({
-    base: "/gide-search",
+    base: "/portal",
     env: {
         schema: {
             GIDE_SEARCH_API: envField.string({
@@ -9,8 +12,9 @@ export default defineConfig({
                 required: true,
                 access: "public",
                 context: "client",
-                default: "http://127.0.0.1:8000/search"
+                default: "https://wwwdev.gide-project.org/search/search"
             }),
         }
-    }
+    },
+    adapter
 });

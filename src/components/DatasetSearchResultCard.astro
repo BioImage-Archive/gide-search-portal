@@ -1,5 +1,5 @@
 ---
-const { studyCardInfo } = Astro.props;
+const { studyCardInfo, licence_map} = Astro.props;
 
 const entry = studyCardInfo ?? {};
 
@@ -23,6 +23,8 @@ const imaging_method = studyCardInfo.measurementMethod.filter(
         return subject.type == "DefinedTerm" && subject.id;
     },
 );
+
+const license = studyCardInfo.license
 ---
 
 <article class="study-card">
@@ -57,7 +59,9 @@ const imaging_method = studyCardInfo.measurementMethod.filter(
                     </p>
                 )
             }
-            {date && <p class="date">{date}</p>}
+            <p class="date">  
+                Published: {date} &emsp;
+                Licence: {license && <a href={license}>{licence_map.get(license) ?? license}</a>} </p>
         </span>
     </div>
 
@@ -115,11 +119,14 @@ const imaging_method = studyCardInfo.measurementMethod.filter(
     }
 
     .thumbnail {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
         flex-shrink: 0;
         margin: 1rem 1rem 1rem 0;
+        img {
+            width: 120px;
+            max-height: 120px;
+            height: auto;
+            object-fit: fill;
+        }
     }
 
     .card-title {
@@ -144,7 +151,7 @@ const imaging_method = studyCardInfo.measurementMethod.filter(
 
     .card-title .authors,
     .card-title .date {
-        margin: 0 0 0.25rem;
+        margin: 0 0 0.5rem;
         font-size: 0.875rem;
         color: #555;
     }
