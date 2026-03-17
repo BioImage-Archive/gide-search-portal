@@ -84,7 +84,6 @@ let totalResults = 0;
 
 const searchResponse = await fetch(String(searchURL));
 
-console.log(String(searchURL));
 if (searchResponse.ok) {
     const data = await searchResponse.json();
     hits = data.hits;
