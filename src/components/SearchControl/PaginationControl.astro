@@ -7,7 +7,7 @@ const totalPages = paginationData.totalPages;
 function buildPageURL(targetPage) {
   const url = new URL(Astro.request.url);
   url.searchParams.set("page", targetPage);
-  return url.toString();
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 let startPage = Math.max(1, currentPage - 2);
