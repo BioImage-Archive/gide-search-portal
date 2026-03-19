@@ -1,5 +1,6 @@
 ---
-const { studyCardInfo, licence_map} = Astro.props;
+const { studyCardInfo, licence_map } = Astro.props;
+import { Image } from "astro:assets";
 
 const entry = studyCardInfo ?? {};
 
@@ -24,7 +25,7 @@ const imaging_method = studyCardInfo.measurementMethod.filter(
     },
 );
 
-const license = studyCardInfo.license
+const license = studyCardInfo.license;
 ---
 
 <article class="study-card">
@@ -32,7 +33,12 @@ const license = studyCardInfo.license
         {
             thumbnailUrl && (
                 <a href={url} class="thumbnail">
-                    <img src={thumbnailUrl} alt={`Thumbnail for ${title}`} />
+                    <img
+                        src={thumbnailUrl}
+                        alt={`Thumbnail for ${title}`}
+                        loading="lazy"
+                        onerror="this.remove()"
+                    />
                 </a>
             )
         }
@@ -59,9 +65,15 @@ const license = studyCardInfo.license
                     </p>
                 )
             }
-            <p class="date">  
-                Published: {date} &emsp;
-                Licence: {license && <a href={license}>{licence_map.get(license) ?? license}</a>} </p>
+            <p class="date">
+                Published: {date} &emsp; Licence: {
+                    license && (
+                        <a href={license}>
+                            {licence_map.get(license) ?? license}
+                        </a>
+                    )
+                }
+            </p>
         </span>
     </div>
 
@@ -118,15 +130,13 @@ const license = studyCardInfo.license
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .thumbnail {
+    .thumbnail img {
         flex-shrink: 0;
+        width: 120px;
+        max-height: 120px;
+        height: auto;
+        object-fit: fill;
         margin: 1rem 1rem 1rem 0;
-        img {
-            width: 120px;
-            max-height: 120px;
-            height: auto;
-            object-fit: fill;
-        }
     }
 
     .card-title {
