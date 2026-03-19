@@ -1,6 +1,5 @@
 ---
 const { studyCardInfo, licence_map } = Astro.props;
-import { Image } from "astro:assets";
 
 const entry = studyCardInfo ?? {};
 
@@ -49,7 +48,7 @@ const license = studyCardInfo.license;
                 authors.length > 0 && (
                     <p class="authors">
                         {authors.map((a, i) => {
-                            let url = null;
+                            let url;
                             try {
                                 url = new URL(a.id);
                             } catch {
@@ -130,13 +129,15 @@ const license = studyCardInfo.license;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .thumbnail img {
+    .thumbnail {
         flex-shrink: 0;
-        width: 120px;
-        max-height: 120px;
-        height: auto;
-        object-fit: fill;
-        margin: 1rem 1rem 1rem 0;
+        img {
+            width: 120px;
+            max-height: 120px;
+            height: auto;
+            object-fit: fill;
+            margin: 1rem 1rem 1rem 0;
+        }
     }
 
     .card-title {
