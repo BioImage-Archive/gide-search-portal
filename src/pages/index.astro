@@ -118,22 +118,23 @@ const licence_map = facetData?.license.reduce((acc, licence_facet) => {acc.set(l
             </aside>
             <div class="col-md-8">
                 <!-- Central column for search and results -->
-                <div id="search-controls" style="justify-content: flex-end;">
-                    <form id="user-query" style="flex: 1 0 auto;">
-                        <div class="has-secondary-background-color">
+                <div id="search-controls" >
+                    <form id="user-query" style="flex: 1 0 content;">
+                        <div class="has-secondary-background-color" style="display: flex; flex: 7 ">
                             <input
                                 name="query"
                                 id="query"
                                 type="text"
                                 placeholder="Enter search terms..."
                                 value={query ?? null}
+                                style="flex: 1;"
                             />
                             <button
                                 id="search-button"
                                 style="padding: 0 0.5rem;">Search</button
                             >
                         </div>
-                        <div>
+                        <div style="padding: 0 20px; margin: 0.5% 0;">
                             <label
                                 for="pageSize"
                                 class=""
