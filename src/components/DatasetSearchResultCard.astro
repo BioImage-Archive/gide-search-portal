@@ -1,4 +1,9 @@
 ---
+import idrLogo from "../assets/repository_logos/logo-idr.svg";
+import biaLogo from "../assets/repository_logos/logo-bia.png";
+import ssbdRepositoryLogo from "../assets/repository_logos/ssbd_repository.svg";
+import ssbdDatabaseLogo from "../assets/repository_logos/ssbd_database.svg";
+
 const { studyCardInfo, licence_map } = Astro.props;
 
 const entry = studyCardInfo ?? {};
@@ -14,34 +19,73 @@ const thumbnailUrl =
 const authors = entry.author ?? [];
 const date = entry.datePublished;
 
-const organisms = studyCardInfo.about.filter(function (subject) {
+const organisms = entry.about.filter(function (subject) {
     return subject.type == "Taxon";
 });
 
-const imaging_method = studyCardInfo.measurementMethod.filter(
-    function (subject) {
-        return subject.type == "DefinedTerm" && subject.id;
-    },
-);
+const imaging_method = entry.measurementMethod.filter(function (subject) {
+    return subject.type == "DefinedTerm" && subject.id;
+});
 
 const license = studyCardInfo.license;
 const publisher_id = studyCardInfo.publisher.id;
 const publisher_name = studyCardInfo.publisher.name;
+
+const fallbackMap = {
+    idr: idrLogo.src,
+    bia: biaLogo.src,
+    "ssbd-database": ssbdDatabaseLogo.src,
+    "ssbd-repository": ssbdRepositoryLogo.src,
+};
+
+function getFallbackSrc(publisher_id) {
+    if (publisher_id.includes("idr.openmicroscopy.org")) return fallbackMap.idr;
+    if (publisher_id.includes("ebi.ac.uk/bioimage-archive"))
+        return fallbackMap.bia;
+    if (publisher_id.includes("ssbd.riken.jp/database"))
+        return fallbackMap["ssbd-database"];
+    if (publisher_id.includes("ssbd.riken.jp/repository"))
+        return fallbackMap["ssbd-repository"];
+    return null;
+}
+
+const fallbackSrc = getFallbackSrc(publisher_id);
+
+function isValidUrl(str) {
+    try {
+        new URL(str);
+        return true;
+    } catch {
+        return false;
+    }
+}
 ---
 
 <article class="study-card">
     <div class="card-title">
         {
-            thumbnailUrl && (
+            thumbnailUrl ? (
                 <a href={url} class="thumbnail">
                     <img
                         src={thumbnailUrl}
-                        alt={`Thumbnail for ${title}`}
+                        alt="Thumbnail"
                         loading="lazy"
-                        onerror="this.remove()"
+                        onerror={
+                            fallbackSrc
+                                ? `this.onerror=null;this.src='${fallbackSrc}'`
+                                : "this.remove()"
+                        }
                     />
                 </a>
-            )
+            ) : fallbackSrc ? (
+                <div class="thumbnail">
+                    <img
+                        src={fallbackSrc}
+                        alt="Fallback logo"
+                        class="fallback-logo"
+                    />
+                </div>
+            ) : null
         }
         <span class="card-title-text">
             <a href={url}><h2>{title}</h2></a>
@@ -49,29 +93,23 @@ const publisher_name = studyCardInfo.publisher.name;
             {
                 authors.length > 0 && (
                     <p class="authors">
-                        {authors.map((a, i) => {
-                            let url;
-                            try {
-                                url = new URL(a.id);
-                            } catch {
-                                // not a valid absolute URL
-                            }
-                            return (
-                                <>
-                                    {i > 0 && ", "}
-                                    {url ? <a href={a.id}>{a.name}</a> : a.name}
-                                </>
-                            );
-                        })}
+                        {authors.map((author, index) => (
+                            <>
+                                {index > 0 && ", "}
+                                {isValidUrl(author.id) ? (
+                                    <a href={author.id}>{author.name}</a>
+                                ) : (
+                                    author.name
+                                )}
+                            </>
+                        ))}
                     </p>
                 )
             }
             <p class="date">
-                Published: {date} &emsp; 
-                Licence: <a href={license}>
+                Published: {date} &emsp; Licence: <a href={license}>
                     {licence_map.get(license) ?? license}
-                </a> &emsp; 
-                Publisher: <a href={publisher_id}>
+                </a> &emsp; Publisher: <a href={publisher_id}>
                     {publisher_name ?? publisher_id}
                 </a>
             </p>
@@ -133,13 +171,14 @@ const publisher_name = studyCardInfo.publisher.name;
 
     .thumbnail {
         flex-shrink: 0;
-        img {
-            width: 120px;
-            max-height: 120px;
-            height: auto;
-            object-fit: fill;
-            margin: 1rem 1rem 1rem 0;
-        }
+    }
+
+    .thumbnail img {
+        width: 120px;
+        max-height: 120px;
+        height: auto;
+        object-fit: fill;
+        margin: 1rem 1rem 1rem 0;
     }
 
     .card-title {
@@ -177,5 +216,13 @@ const publisher_name = studyCardInfo.publisher.name;
 
     .card-content .term-link {
         padding-right: 0.5rem;
+    }
+
+    .fallback-logo {
+        width: 120px;
+        max-height: 120px;
+        height: auto;
+        object-fit: contain;
+        margin: 1rem 1rem 1rem 0;
     }
 </style>
