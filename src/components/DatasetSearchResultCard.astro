@@ -89,6 +89,7 @@ function isValidUrl(str) {
         }
         <span class="card-title-text">
             <a href={url}><h2>{title}</h2></a>
+            <p class="identifier">Identifier: {studyCardInfo.identifier}</p>
 
             {
                 authors.length > 0 && (
@@ -202,6 +203,7 @@ function isValidUrl(str) {
     }
 
     .card-title .authors,
+    .card-title .identifier,
     .card-title .date {
         margin: 0 0 0.5rem;
         font-size: 0.875rem;
